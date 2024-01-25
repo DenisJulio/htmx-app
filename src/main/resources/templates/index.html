@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+  lang="en"
+>
+  <head>
+    <title>HTMX Trial</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link th:href="@{/styles.css}" rel="stylesheet" />
+  </head>
+
+  <body>
+    <main class="mt-20 flex flex-col items-center">
+      <h1 class="my-8 font-bold">Hello HTMX!!!</h1>
+      <button
+        class="p-2 bg-blue-300 rounded-md text-white"
+        th:hx-post="@{/clicked}"
+        hx-swap="outerHTML"
+      >
+        Please click Me
+      </button>
+      <span id="message" class="my-8 font-bold"
+        >Do you want to read a special message?</span
+      >
+      <button
+        th:hx-get="@{/message}"
+        hx-target="#message"
+        class="p-2 bg-blue-300 rounded-md text-white"
+      >
+        Click Here
+      </button>
+      <div class="text-center" x-data="{ count: 0}">
+        <p class="my-5 text-red-400 text-[2rem] font-bold" x-text="count"></p>
+        <button class="p-2 bg-blue-300 rounded-md text-white" @click="count++">
+          Increment
+        </button>
+        <button
+          class="p-2 bg-blue-300 rounded-md disabled:bg-slate-300 text-white"
+          @click="count--"
+          x-bind:disabled="count === 0"
+        >
+          Decrement
+        </button>
+      </div>
+      <div
+        id="calculador-de-notas"
+        class="flex flex-col items-center my-5"
+        x-data="{
+          headers: ['Valor da Nota', 'Quantidade de Notas', 'Total'],
+          notas: [
+            { valor: 200, quantidade: 0 },
+            { valor: 100, quantidade: 0 },
+            { valor: 50, quantidade: 0 },
+            { valor: 20, quantidade: 0 },
+            { valor: 10, quantidade: 0 },
+            { valor: 5, quantidade: 0 },
+            { valor: 2, quantidade: 0 },
+          ], 
+          grandTotal: 0,
+        }"
+      >
+        <p>Calculadora de notas</p>
+        <table class="divide-y divide-gray-200">
+          <thead>
+            <tr class="mx-2">
+              <template x-for="header in headers">
+                <th class="p-2 text-lg" x-text="header"></th>
+              </template>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="(nota, index) in notas" :key="index">
+              <tr class="text-center">
+                <td x-text="nota.valor"></td>
+                <td>
+                  <input
+                    type="number"
+                    min="0"
+                    x-model="nota.quantidade"
+                    class="mt-1 px-2 w-20 border-solid border-[1px] border-gray-300 rounded-lg"
+                  />
+                  <button
+                    class="ml-2 px-2 border-[1px] border-gray-300 rounded-full text-red-500"
+                    @click="nota.quantidade = 0"
+                  >
+                    x
+                  </button>
+                </td>
+                <td
+                  class="font-bold"
+                  x-text="(nota.valor * nota.quantidade) + ' R$'"
+                ></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+        <p class="text-xl mt-3 self-start">
+          Grant total:
+          <span
+            class="font-bold"
+            x-text="(notas.reduce((sum, nota) => sum + (nota.valor * nota.quantidade), 0)) + ' R$'"
+          ></span>
+        </p>
+      </div>
+    </main>
+    <script
+      type="text/javascript"
+      th:src="@{/webjars/htmx.org/1.9.9/dist/htmx.min.js}"
+    ></script>
+    <script defer th:src="@{/webjars/alpinejs/3.13.3/dist/cdn.min.js}"></script>
+  </body>
+</html>
